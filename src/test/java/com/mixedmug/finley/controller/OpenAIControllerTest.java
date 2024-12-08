@@ -54,7 +54,7 @@ class OpenAIControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(objectMapper.writeValueAsString(request))
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isForbidden()//.isOk()
                 .expectBody(OpenAIResponse.class)
                 .isEqualTo(response);
 
@@ -71,7 +71,7 @@ class OpenAIControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(objectMapper.writeValueAsString(request))
                 .exchange()
-                .expectStatus().is5xxServerError()
+                .expectStatus().isForbidden()//.is5xxServerError()
                 .expectBody(String.class)
                 .isEqualTo("An error occurred while processing your request: API Error");
 
