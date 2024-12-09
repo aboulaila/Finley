@@ -1,7 +1,8 @@
 package com.mixedmug.finley.controller;
 
+import com.mixedmug.finley.model.AIRequest;
+import com.mixedmug.finley.model.AIResponse;
 import com.mixedmug.finley.model.openai.OpenAIRequest;
-import com.mixedmug.finley.model.openai.OpenAIResponse;
 import com.mixedmug.finley.service.openai.OpenAIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,18 @@ public class OpenAIController {
     }
 
     @PostMapping("/completion")
-    public Mono<OpenAIResponse> getCompletion(@RequestBody OpenAIRequest request) {
+    public Mono<AIResponse> getCompletion(@RequestBody OpenAIRequest request) {
         logger.info("Received POST /completion request: {}", request);
-        return openAIService.getCompletion(request)
+
+        var aiRequest = AIRequest.builder()
+                .model(request.getModel())
+                .maxTokens(request.getMax_completion_tokens())
+                .temperature(request.getTemperature())
+                .messages(request.getMessages())
+                .n(request.getN())
+                .build();
+
+        return openAIService.getCompletion(aiRequest)
                 .doOnSuccess(response -> logger.info("Successfully processed /completion request: {}", response))
                 .doOnError(e -> logger.error("Error processing /completion request: {}", e.getMessage(), e));
     }

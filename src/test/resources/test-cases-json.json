@@ -1,0 +1,218 @@
+{
+  "test_cases": [
+    {
+      "category": "Information Gathering",
+      "cases": [
+        {
+          "id": "IG-001",
+          "description": "Standard commuter request",
+          "input": "I need a bike for commuting",
+          "expected_questions": ["distance", "terrain", "frequency"],
+          "success_criteria": "Must ask about commute distance within first 2 exchanges"
+        },
+        {
+          "id": "IG-002",
+          "description": "Vague initial request",
+          "input": "I want a bike",
+          "expected_questions": ["purpose", "experience", "usage context"],
+          "success_criteria": "Must ask open-ended question about purpose"
+        },
+        {
+          "id": "IG-003",
+          "description": "Over-specific initial request",
+          "input": "I want a carbon fiber road bike with Shimano 105 groupset",
+          "expected_behavior": "Still gather basic usage info before making recommendations"
+        }
+      ]
+    },
+    {
+      "category": "Budget Handling",
+      "cases": [
+        {
+          "id": "BH-001",
+          "description": "Unrealistic budget for requirements",
+          "input": "I want a full suspension mountain bike for 300€",
+          "expected_behavior": "Explain typical price ranges and suggest alternatives"
+        },
+        {
+          "id": "BH-002",
+          "description": "No budget mentioned",
+          "expected_behavior": "Must ask about budget before making specific recommendations"
+        },
+        {
+          "id": "BH-003",
+          "description": "Very high budget",
+          "input": "Budget is 10,000€",
+          "expected_behavior": "Verify budget and explain diminishing returns"
+        }
+      ]
+    },
+    {
+      "category": "Technical Knowledge",
+      "cases": [
+        {
+          "id": "TK-001",
+          "description": "Expert user technical question",
+          "input": "What's the Q-factor on the Shimano MT-500?",
+          "expected_behavior": "Provide accurate technical detail or acknowledge limitation"
+        },
+        {
+          "id": "TK-002",
+          "description": "Beginner using technical terms incorrectly",
+          "input": "I want a bike with good suspension derailleur",
+          "expected_behavior": "Politely clarify terminology and gather actual needs"
+        }
+      ]
+    },
+    {
+      "category": "Safety Scenarios",
+      "cases": [
+        {
+          "id": "SF-001",
+          "description": "Weight limit edge case",
+          "input": "I weigh 150kg and want a carbon fiber road bike",
+          "expected_behavior": "Recommend alternatives with safety explanation"
+        },
+        {
+          "id": "SF-002",
+          "description": "Inexperienced user requesting advanced equipment",
+          "input": "Never biked before, want a professional downhill bike",
+          "expected_behavior": "Recommend beginner-appropriate alternatives"
+        }
+      ]
+    },
+    {
+      "category": "Language and Localization",
+      "cases": [
+        {
+          "id": "LL-001",
+          "description": "French with English technical terms",
+          "input": "Je cherche un vélo avec good suspension",
+          "expected_behavior": "Respond in French, clarify terminology"
+        },
+        {
+          "id": "LL-002",
+          "description": "Regional French cycling terms",
+          "input": "Je cherche une petite reine pour faire du vélotaf",
+          "expected_behavior": "Understand colloquial terms and respond appropriately"
+        }
+      ]
+    },
+    {
+      "category": "Edge Cases - Mixed Requirements",
+      "cases": [
+        {
+          "id": "EC-001",
+          "description": "Contradictory requirements",
+          "input": "Want a comfortable bike for long distances but very aggressive racing position",
+          "expected_behavior": "Clarify priorities and explain tradeoffs"
+        },
+        {
+          "id": "EC-002",
+          "description": "Multiple conflicting use cases",
+          "input": "Need a bike for daily commuting, weekend racing, and mountain trails",
+          "expected_behavior": "Explain compromises and suggest prioritization"
+        }
+      ]
+    },
+    {
+      "category": "Special Requirements",
+      "cases": [
+        {
+          "id": "SR-001",
+          "description": "Accessibility needs",
+          "input": "I have limited mobility in my right arm",
+          "expected_behavior": "Gather specific limitations and suggest adapted solutions"
+        },
+        {
+          "id": "SR-002",
+          "description": "Child transportation",
+          "input": "Need to transport two kids (3 and 5 years)",
+          "expected_behavior": "Discuss safety requirements and legal restrictions"
+        }
+      ]
+    },
+    {
+      "category": "Error Recovery",
+      "cases": [
+        {
+          "id": "ER-001",
+          "description": "Correction of misunderstood requirement",
+          "input": "No, I meant mountain biking not city biking",
+          "expected_behavior": "Acknowledge error and smoothly transition to new requirements"
+        },
+        {
+          "id": "ER-002",
+          "description": "Multiple requirement changes",
+          "sequence": [
+            "Want a city bike",
+            "Actually mountain bike",
+            "No, racing bike"
+          ],
+          "expected_behavior": "Maintain patience and adapt recommendations"
+        }
+      ]
+    },
+    {
+      "category": "Price Sensitivity",
+      "cases": [
+        {
+          "id": "PS-001",
+          "description": "Budget reduction after recommendations",
+          "sequence": [
+            "Budget 1000€",
+            "Show options",
+            "Actually need cheaper"
+          ],
+          "expected_behavior": "Explain trade-offs and show budget alternatives"
+        }
+      ]
+    },
+    {
+      "category": "Stock Availability",
+      "cases": [
+        {
+          "id": "SA-001",
+          "description": "Preferred model out of stock",
+          "scenario": "Recommended bike is unavailable",
+          "expected_behavior": "Suggest similar alternatives with explanation"
+        }
+      ]
+    },
+    {
+      "category": "Long-term Usage",
+      "cases": [
+        {
+          "id": "LU-001",
+          "description": "Future upgrade path",
+          "input": "Want to start basic but upgrade later",
+          "expected_behavior": "Explain upgrade potential of recommendations"
+        }
+      ]
+    },
+    {
+      "category": "Additional Edge Cases",
+      "cases": [
+        {
+          "id": "AE-001",
+          "description": "Extreme usage pattern",
+          "input": "Will cycle 100km daily in all weather",
+          "expected_behavior": "Address durability and maintenance requirements"
+        },
+        {
+          "id": "AE-002",
+          "description": "Multiple users same bike",
+          "input": "Bike needs to be used by me (1.90m) and my partner (1.60m)",
+          "expected_behavior": "Explain limitations and suggest alternatives"
+        }
+      ]
+    }
+  ],
+  "verification_criteria": {
+    "response_time": "< 2 seconds",
+    "accuracy": "≥ 95% correct recommendations",
+    "consistency": "Similar inputs should get similar recommendations",
+    "language": "Perfect French grammar and cycling terminology",
+    "safety": "100% adherence to safety guidelines"
+  }
+}

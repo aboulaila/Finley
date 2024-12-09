@@ -1,21 +1,19 @@
-package com.mixedmug.finley.model.openai;
+package com.mixedmug.finley.model.anthropic;
 
 import com.mixedmug.finley.model.AIRequest;
 import lombok.Data;
 
 @Data
-public class OpenAIRequest {
+public class AnthropicRequest {
     private String model;
     private AIRequest.AIMessage[] messages;
-    private int max_completion_tokens;
+    private int max_tokens;
     private double temperature;
-    private int n;
 
-    public OpenAIRequest(AIRequest aiRequest) {
+    public AnthropicRequest(AIRequest aiRequest) {
         this.model = aiRequest.getModel();
         this.messages = aiRequest.getMessages();
-        this.max_completion_tokens = aiRequest.getMaxTokens();
+        this.max_tokens = aiRequest.getMaxTokens();
         this.temperature = aiRequest.getTemperature();
-        this.n = aiRequest.getN();
     }
 }
