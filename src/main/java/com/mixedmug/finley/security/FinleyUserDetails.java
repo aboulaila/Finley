@@ -22,9 +22,9 @@ public class FinleyUserDetails implements UserDetails {
     public FinleyUserDetails(User user) {
         this.email = user.getEmail();
         this.username = user.getEmail();
-        this.password = user.getPassword();
+        this.password = "user.getPassword()";
         this.authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRoles().get(0));
         this.authorities.add(authority);
     }
 }

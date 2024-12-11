@@ -10,6 +10,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.Map;
+
+import static com.mixedmug.finley.security.JwtUtil.EMAIL;
+
 @Service
 public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
@@ -19,22 +24,26 @@ public class CustomOAuth2UserService implements ReactiveOAuth2UserService<OAuth2
         this.userRepository = userRepository;
     }
 
+
     @Override
     public Mono<OAuth2User> loadUser(OAuth2UserRequest userRequest) {
         final DefaultReactiveOAuth2UserService delegate = new DefaultReactiveOAuth2UserService();
         return delegate.loadUser(userRequest)
                 .flatMap(oauth2User -> {
-                    String email = oauth2User.getAttribute("email");
-                    if (email == null) {
-                        return Mono.error(new RuntimeException("Email not found from OAuth2 provider"));
-                    }
+                    String provider = userRequest.getClientRegistration().getRegistrationId();
+                    Map<String, Object> attributes = oauth2User.getAttributes();
 
-                    return userRepository.findByEmail(email)
+                    return userRepository.findByEmail((String) attributes.get(EMAIL))
                             .switchIfEmpty(Mono.defer(() -> {
                                 User newUser = new User();
-                                newUser.setEmail(email);
-                                newUser.setUsername(oauth2User.getAttribute("name"));
-                                newUser.setRole("ROLE_USER");
+                                if ("google".equals(provider)) {
+                                    newUser.setEmail((String) attributes.get("email"));
+                                    newUser.setName((String) attributes.get("name"));
+                                    newUser.setPictureUrl((String) attributes.get("picture"));
+                                    newUser.setProvider(provider);
+                                    newUser.setProviderId((String) attributes.get("sub"));
+                                    newUser.setRoles(Collections.singletonList("ROLE_USER"));
+                                }
                                 return userRepository.save(newUser);
                             }))
                             .thenReturn(oauth2User);

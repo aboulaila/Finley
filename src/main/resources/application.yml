@@ -1,0 +1,12 @@
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: 1011052694596-41c27fopgo92m809li62rhfeetl0p709.apps.googleusercontent.com
+      client-secret: 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
+      use-basic-authentication-with-access-code-grant: true
+      use-pkce-with-authorization-code-grant: false
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
+  api-docs:
+    path: /v3/api-docs

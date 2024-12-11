@@ -1,10 +1,7 @@
 package com.mixedmug.finley.config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.OAuthFlow;
-import io.swagger.v3.oas.annotations.security.OAuthFlows;
-import io.swagger.v3.oas.annotations.security.OAuthScope;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.*;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -32,6 +29,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
+                .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement().addList("oauth2"))
                 .info(new Info().title("Finley OpenAI API")
                         .description("API documentation for Finley")
                         .version("v0.0.1"))

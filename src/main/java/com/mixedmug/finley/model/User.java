@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.List;
+
 @Table("users")
 @Data
 @AllArgsConstructor
@@ -13,8 +15,11 @@ import org.springframework.data.relational.core.mapping.Table;
 public class User {
     @Id
     private Long id;
-    private String username;
-    private String password;
+    private String name;
+    private String pictureUrl;
+    private String password_hash;
+    private String provider;
+    private String providerId;
     private String email;
-    private String role;
+    private List<String> roles;
 }

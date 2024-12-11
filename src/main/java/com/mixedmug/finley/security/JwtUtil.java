@@ -1,5 +1,6 @@
 package com.mixedmug.finley.security;
 
+import com.mixedmug.finley.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     public static final String EMAIL = "email";
+    public static final String ROLES = "roles";
 
     @Value("${jwt.secret}")
     private String secret;
@@ -24,10 +26,11 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(FinleyUserDetails userDetails) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .claim(EMAIL, userDetails.getEmail())
-                .subject(userDetails.getUsername())
+                .claim(EMAIL, user.getEmail())
+                .claim(ROLES, user.getRoles())
+                .subject(user.getEmail())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(getSigningKey())

@@ -4,22 +4,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.reactive.config.WebFluxConfigurer;
+import org.springframework.web.server.WebFilter;
 
 import java.util.List;
 
 @Configuration
-public class CorsConfig implements WebFluxConfigurer {
+public class CorsConfig {
 
-    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080", "https://accounts.google.com"));
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -27,13 +26,8 @@ public class CorsConfig implements WebFluxConfigurer {
         return source;
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080", "https://accounts.google.com")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true)
-                .maxAge(3600);
+    @Bean
+    public WebFilter corsWebFilter() {
+        return new CorsWebFilter(corsConfigurationSource());
     }
 }
