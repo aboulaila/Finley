@@ -20,7 +20,7 @@ public class ConversationService {
     }
 
     public Mono<Conversation> getConversation(String userId) {
-        return conversationRepository.findById(userId)
+        return conversationRepository.findByUserId(userId)
                 .switchIfEmpty(Mono.defer(() -> {
                     Conversation newConversation = new Conversation(userId);
                     logger.info("Creating new conversation for userId: {}", userId);
@@ -37,7 +37,7 @@ public class ConversationService {
     }
 
     public Mono<Void> resetConversation(String userId) {
-        return conversationRepository.deleteById(userId)
+        return conversationRepository.deleteByUserId(userId)
                 .doOnSuccess(unused -> logger.info("Reset conversation for userId: {}", userId))
                 .doOnError(e -> logger.error("Error resetting conversation for userId: {}", userId, e));
     }

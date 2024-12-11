@@ -1,7 +1,6 @@
 package com.mixedmug.finley.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ public class AIRequest {
     private String model;
 
     @Schema(description = "A list of messages comprising the conversation so far.")
-    private AIMessage[] messages;
+    private Message[] messages;
 
     @Schema(description = "An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens.", example = "50")
     private int maxTokens;
@@ -24,16 +23,4 @@ public class AIRequest {
 
     @Schema(description = "Number of completions to generate", example = "1")
     private int n;
-
-    @Data
-    @AllArgsConstructor
-    @Schema(description = "Message content")
-    public static class AIMessage {
-
-        @Schema(description = "The role of the messages author", example = "user")
-        private String role;
-
-        @Schema(description = "The contents of the system message.", example = "Hello!")
-        private String content;
-    }
 }

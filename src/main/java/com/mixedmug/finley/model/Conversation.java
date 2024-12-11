@@ -11,15 +11,16 @@ import java.util.List;
 @Data
 public class Conversation {
     @Id
+    private Long id;
     private String userId;
     //todo: to reduce the overhead, summarize the chat when messages reach a certain threshold
-    private List<AIRequest.AIMessage> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     public Conversation(String userId) {
         this.userId = userId;
     }
 
     public void addMessage(String role, String message) {
-        this.messages.add(new AIRequest.AIMessage(role, message));
+        this.messages.add(new Message(role, message));
     }
 }

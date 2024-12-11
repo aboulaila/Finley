@@ -1,12 +1,13 @@
 package com.mixedmug.finley.model.anthropic;
 
 import com.mixedmug.finley.model.AIRequest;
+import com.mixedmug.finley.model.Message;
 import lombok.Data;
 
 @Data
 public class AnthropicRequest {
     private String model;
-    private AIRequest.AIMessage[] messages;
+    private Message[] messages;
     private int max_tokens;
     private double temperature;
 

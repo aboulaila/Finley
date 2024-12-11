@@ -10,3 +10,15 @@ springdoc:
       enabled: false
   api-docs:
     path: /v3/api-docs
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/finley_db
+    username: finley_user
+    password: finley_password
+    pool:
+      initial-size: 5
+      max-size: 20
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false

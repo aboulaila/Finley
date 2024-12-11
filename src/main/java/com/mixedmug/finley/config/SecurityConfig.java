@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .pathMatchers("/api/auth/**", "/oauth2/**").permitAll()
-                        .pathMatchers("/api/openai/**", "/api/finley/**").authenticated()
+                        .pathMatchers("/api/openai/**", "/api/finley/**").permitAll()
                         .anyExchange().permitAll()
                 )
                 .oauth2Login(Customizer.withDefaults())

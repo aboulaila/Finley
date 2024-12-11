@@ -31,13 +31,13 @@ public class FinleyController {
 
     @PostMapping("/chat")
     public Mono<ConversationResponse> chat(@RequestBody UserQuery userQuery) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Mono.error(new SecurityException("User is not authenticated"));
-        }
-
-        FinleyUserDetails userDetails = (FinleyUserDetails) authentication.getPrincipal();
-        String email = userDetails.getEmail();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return Mono.error(new SecurityException("User is not authenticated"));
+//        }
+//
+//        FinleyUserDetails userDetails = (FinleyUserDetails) authentication.getPrincipal();
+        String email = userQuery.getEmail();//userDetails.getEmail();
         String message = userQuery.getMessage();
 
         return conversationService.getConversation(email)
