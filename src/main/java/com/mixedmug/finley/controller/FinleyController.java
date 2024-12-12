@@ -1,6 +1,7 @@
 package com.mixedmug.finley.controller;
 
 import com.mixedmug.finley.agent.RecommendationAgent;
+import com.mixedmug.finley.model.Conversation;
 import com.mixedmug.finley.model.ConversationResponse;
 import com.mixedmug.finley.model.UserQuery;
 import com.mixedmug.finley.security.FinleyUserDetails;
@@ -31,13 +32,7 @@ public class FinleyController {
 
     @PostMapping("/chat")
     public Mono<ConversationResponse> chat(@RequestBody UserQuery userQuery) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return Mono.error(new SecurityException("User is not authenticated"));
-//        }
-//
-//        FinleyUserDetails userDetails = (FinleyUserDetails) authentication.getPrincipal();
-        String email = userQuery.getEmail();//userDetails.getEmail();
+        String email = userQuery.getEmail();
         String message = userQuery.getMessage();
 
         return conversationService.getConversation(email)
@@ -60,7 +55,16 @@ public class FinleyController {
                 });
     }
 
-    // Optional: Endpoint to reset or delete a conversation
+    @GetMapping("/conversation")
+    public Mono<Conversation> conversation(@RequestParam String email) {
+        return conversationService.getConversation(email)
+                .flatMap(Mono::just)
+                .onErrorResume(e -> {
+                    logger.error("Failed to retrieve conversation for user [{}]: {}", email, e.getMessage(), e);
+                    return Mono.error(new RuntimeException("Failed to retrieve conversation", e));
+                });
+    }
+
     @PostMapping("/chat/reset")
     public Mono<ConversationResponse> resetConversation() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
