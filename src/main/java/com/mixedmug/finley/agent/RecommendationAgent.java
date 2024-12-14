@@ -1,9 +1,7 @@
 package com.mixedmug.finley.agent;
 
-import com.mixedmug.finley.model.AIRequest;
-import com.mixedmug.finley.model.Conversation;
-import com.mixedmug.finley.model.ConversationResponse;
-import com.mixedmug.finley.model.Message;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mixedmug.finley.model.*;
 import com.mixedmug.finley.service.anthropic.AnthropicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +16,12 @@ public class RecommendationAgent {
 
     private final AnthropicService anthropicService;
     private final String promptTemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public RecommendationAgent(AnthropicService anthropicService) throws IOException {
+    public RecommendationAgent(AnthropicService anthropicService, ObjectMapper objectMapper) throws IOException {
         this.anthropicService = anthropicService;
+        this.objectMapper = objectMapper;
         this.promptTemplate = loadPromptTemplate();
     }
 
@@ -30,10 +30,13 @@ public class RecommendationAgent {
         return Files.readString(path);
     }
 
-    public Mono<ConversationResponse> generateResponse(final Conversation conversation) {
+    public Mono<ConversationResponse> generateResponse(final UserIntent userIntent, String lastMessage) {
         var messages = new ArrayList<Message>();
-        messages.add(new Message("user", promptTemplate));
-        messages.addAll(conversation.getMessages());
+
+        String prompt = promptTemplate.replace("{{MOOD}}", userIntent.getMood().toString())
+                .replace("{{CONVERSATION_CONTEXT}}", userIntent.getContext())
+                .replace("{{USER_PROMPT}}", lastMessage);
+        messages.add(new Message("user", prompt));
 
         var request = AIRequest.builder()
                 .model("claude-3-5-sonnet-20241022")
@@ -43,6 +46,14 @@ public class RecommendationAgent {
                 .build();
 
         return anthropicService.getCompletion(request)
-                .map(response -> new ConversationResponse(response.getChoices().get(0).getText()));
+                .map(response -> response.getChoices().get(0).getText())
+                .map(jsonText -> {
+                    try {
+                        return objectMapper.readValue(jsonText, AgentResponse.class);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to parse JSON into AgentResponse", e);
+                    }
+                })
+                .map(response -> new ConversationResponse(response.getMessage()));
     }
 }

@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class UserQuery {
     private String email;
     private String message;
+
+    public boolean isValid() {
+        return email != null && message != null && !email.isBlank() && !message.isBlank();
+    }
 }
