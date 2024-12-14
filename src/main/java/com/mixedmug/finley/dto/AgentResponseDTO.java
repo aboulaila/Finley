@@ -1,17 +1,14 @@
-package com.mixedmug.finley.model;
+package com.mixedmug.finley.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-import lombok.Data;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("agent_response")
-public class AgentResponse {
-
+public class AgentResponseDTO {
     @Id
     private Long id;
     private Long conversationId;

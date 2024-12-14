@@ -3,24 +3,28 @@ package com.mixedmug.finley.agent;
 import com.mixedmug.finley.model.Conversation;
 import com.mixedmug.finley.model.ConversationResponse;
 import com.mixedmug.finley.model.UserIntent;
+import com.mixedmug.finley.service.ProductConfigurationService;
 import com.mixedmug.finley.service.UserIntentService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
 public class OrchestratorAgent {
+    public static final long BIKES_CATEGORY_ID = 1L;
     private final IntentClassifierAgent intentClassifierAgent;
     private final ModeratorAgent moderatorAgent;
     private final RecommendationAgent recommendationAgent;
     private final OffTopicAgent offTopicAgent;
     private final UserIntentService userIntentService;
+    private final ProductConfigurationService productConfigurationService;
 
-    public OrchestratorAgent(IntentClassifierAgent intentClassifierAgent, ModeratorAgent moderatorAgent, RecommendationAgent recommendationAgent, OffTopicAgent offTopicAgent, UserIntentService userIntentService) {
+    public OrchestratorAgent(IntentClassifierAgent intentClassifierAgent, ModeratorAgent moderatorAgent, RecommendationAgent recommendationAgent, OffTopicAgent offTopicAgent, UserIntentService userIntentService, ProductConfigurationService productConfigurationService) {
         this.intentClassifierAgent = intentClassifierAgent;
         this.moderatorAgent = moderatorAgent;
         this.recommendationAgent = recommendationAgent;
         this.offTopicAgent = offTopicAgent;
         this.userIntentService = userIntentService;
+        this.productConfigurationService = productConfigurationService;
     }
 
     public Mono<ConversationResponse> processInput(Conversation conversation, String lastMessage) {
@@ -32,13 +36,14 @@ public class OrchestratorAgent {
 
                     return intentClassifierAgent.parseUserIntent(conversation, lastMessage)
                         .flatMap(userIntent -> this.userIntentService.saveIntent(userIntent)
-                            .flatMap(newIntent -> {
-                                if (newIntent.getIntent().equals(UserIntent.Intents.BUYING_NEW_PRODUCT)) {
-                                    return recommendationAgent.generateResponse(newIntent, lastMessage);
-                                } else {
-                                    return offTopicAgent.generateResponse(lastMessage);
-                                }
-                            }));
+                            .flatMap(newIntent -> productConfigurationService.getById(BIKES_CATEGORY_ID)
+                                .flatMap(productConfiguration -> {
+                                    if (newIntent.getIntent().equals(UserIntent.Intents.BUYING_NEW_PRODUCT)) {
+                                        return recommendationAgent.generateResponse(newIntent, productConfiguration, lastMessage, conversation.getId());
+                                    } else {
+                                        return offTopicAgent.generateResponse(lastMessage);
+                                    }
+                                })));
                 });
     }
 }
