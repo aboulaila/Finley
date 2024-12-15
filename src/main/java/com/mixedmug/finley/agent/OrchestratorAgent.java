@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class OrchestratorAgent {
     public static final long BIKES_CATEGORY_ID = 1L;
+    public static final long COMPUTERS_CATEGORY_ID = 2L;
     private final IntentClassifierAgent intentClassifierAgent;
     private final ModeratorAgent moderatorAgent;
     private final RecommendationAgent recommendationAgent;
@@ -36,7 +37,7 @@ public class OrchestratorAgent {
 
                     return intentClassifierAgent.parseUserIntent(conversation, lastMessage)
                         .flatMap(userIntent -> this.userIntentService.saveIntent(userIntent)
-                            .flatMap(newIntent -> productConfigurationService.getById(BIKES_CATEGORY_ID)
+                            .flatMap(newIntent -> productConfigurationService.getById(COMPUTERS_CATEGORY_ID)
                                 .flatMap(productConfiguration -> {
                                     if (newIntent.getIntent().equals(UserIntent.Intents.BUYING_NEW_PRODUCT)) {
                                         return recommendationAgent.generateResponse(newIntent, productConfiguration, lastMessage, conversation.getId());
