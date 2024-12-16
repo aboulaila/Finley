@@ -9,33 +9,21 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.ArrayList;
 
 @Component
-public class RecommendationAgent {
+public class RecommendationAgent extends AAgent {
 
-    private final AnthropicService anthropicService;
     private final AgentResponseService agentResponseService;
-    private final String promptTemplate;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public RecommendationAgent(AnthropicService anthropicService, AgentResponseService agentResponseService, ObjectMapper objectMapper) throws IOException {
-        this.anthropicService = anthropicService;
+        super(anthropicService, "recommendation_prompt.md");
         this.agentResponseService = agentResponseService;
         this.objectMapper = objectMapper;
-        this.promptTemplate = loadPromptTemplate();
-    }
-
-    private String loadPromptTemplate() throws IOException {
-        Path path = Paths.get("src", "main", "resources", "prompts", "recommendation_prompt.md");
-        return Files.readString(path);
     }
 
     public Mono<ConversationResponse> generateResponse(final UserIntent userIntent, final ProductConfiguration productConfiguration, String lastMessage, Long conversationId) {
-        var messages = new ArrayList<Message>();
-
         String prompt = promptTemplate
                 .replace("{{PRODUCT_CATEGORY}}", productConfiguration.getProductCategory())
                 .replace("{{PRODUCT_DESCRIPTION}}", productConfiguration.getProductDescription())
@@ -43,17 +31,8 @@ public class RecommendationAgent {
                 .replace("{{MOOD}}", userIntent.getMood().toString())
                 .replace("{{CONVERSATION_CONTEXT}}", userIntent.getContext())
                 .replace("{{USER_PROMPT}}", lastMessage);
-        messages.add(new Message("user", prompt));
 
-        var request = AIRequest.builder()
-                .model("claude-3-5-sonnet-20241022")
-                .maxTokens(1000)
-                .temperature(0)
-                .messages(messages.toArray(new Message[0]))
-                .build();
-
-        return anthropicService.getCompletion(request)
-                .map(response -> response.getChoices().get(0).getText())
+        return getCompletion(prompt)
                 .map(jsonText -> {
                     try {
                         return objectMapper.readValue(jsonText, AgentResponse.class);

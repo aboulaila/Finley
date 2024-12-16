@@ -13,7 +13,7 @@ springdoc:
 
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/finley_db
+    url: r2dbc:postgresql://127.0.0.1:5432/finley_db
     username: finley_user
     password: finley_password
     pool:
