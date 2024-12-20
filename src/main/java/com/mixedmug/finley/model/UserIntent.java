@@ -47,7 +47,6 @@ public class UserIntent {
 
     public enum Intents {
         BUYING_NEW_PRODUCT("BUYING_NEW_PRODUCT"),
-        BUYING_SPARE_PARTS("BUYING_SPARE_PARTS"),
         OTHER_REQUEST("OTHER_REQUEST");
 
         private final String value;

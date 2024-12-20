@@ -12,6 +12,6 @@ public class UserQuery {
     private String message;
 
     public boolean isValid() {
-        return email != null && message != null && !email.isBlank() && !message.isBlank();
+        return email == null || message == null || email.isBlank() || message.isBlank();
     }
 }

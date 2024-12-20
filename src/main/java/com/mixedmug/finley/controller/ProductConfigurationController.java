@@ -2,7 +2,6 @@ package com.mixedmug.finley.controller;
 
 import com.mixedmug.finley.dto.ProductConfigurationDTO;
 import com.mixedmug.finley.service.ProductConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -14,24 +13,23 @@ public class ProductConfigurationController {
 
     private final ProductConfigurationService productConfigurationService;
 
-    @Autowired
     public ProductConfigurationController(ProductConfigurationService productConfigurationService) {
         this.productConfigurationService = productConfigurationService;
     }
 
     @GetMapping
-    public Flux<ProductConfigurationDTO> getAllConfigurations() {
+    public Flux<ProductConfigurationDTO> getAll() {
         return productConfigurationService.getAllConfigurations();
     }
 
     @GetMapping("/{id}")
-    public Mono<ProductConfigurationDTO> getConfigurationById(@PathVariable Long id) {
+    public Mono<ProductConfigurationDTO> findById(@PathVariable Long id) {
         return productConfigurationService.getConfigurationById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductConfigurationDTO> createConfiguration(@RequestBody ProductConfigurationDTO productConfigurationDTO) {
+    public Mono<ProductConfigurationDTO> save(@RequestBody ProductConfigurationDTO productConfigurationDTO) {
         return productConfigurationService.createConfiguration(productConfigurationDTO);
     }
 
@@ -42,7 +40,7 @@ public class ProductConfigurationController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteConfiguration(@PathVariable Long id) {
+    public Mono<Void> delete(@PathVariable Long id) {
         return productConfigurationService.deleteConfiguration(id);
     }
 }

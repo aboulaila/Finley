@@ -25,7 +25,7 @@ public class AgentResponseService {
                 .map(this::mapToDTO);
     }
 
-    public Mono<AgentResponseDTO> getByConversationId(Long conversationId) {
+    public Flux<AgentResponseDTO> getByConversationId(Long conversationId) {
         return agentResponseRepository.findByConversationId(conversationId)
                 .map(this::mapToDTO)
                 .switchIfEmpty(Mono.error(new NoSuchElementException("AgentResponse not found for conversationId: " + conversationId)));

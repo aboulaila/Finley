@@ -5,6 +5,7 @@ import com.mixedmug.finley.repository.ConversationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -15,6 +16,13 @@ public class ConversationManager {
     public ConversationManager(ConversationRepository conversationRepository) {
         this.conversationRepository = conversationRepository;
     }
+
+    public Flux<Conversation> getConversations() {
+        return conversationRepository.findAll()
+                .doOnComplete(() -> logger.debug("Successfully retrieved all conversations"))
+                .doOnError(e -> logger.error("Error retrieving all conversations", e));
+    }
+
 
     public Mono<Conversation> getConversation(String userId) {
         return conversationRepository.findByUserId(userId)
@@ -36,7 +44,8 @@ public class ConversationManager {
     }
 
     public Mono<Void> resetConversation(String userId) {
-        return conversationRepository.deleteByUserId(userId)
+        String newUserId = userId + "-reset-" + System.currentTimeMillis();
+        return conversationRepository.updateUserId(userId, newUserId)
                 .doOnSuccess(unused -> logger.info("Reset conversation for userId: {}", userId))
                 .doOnError(e -> logger.error("Error resetting conversation for userId: {}", userId, e));
     }

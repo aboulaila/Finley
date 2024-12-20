@@ -1,6 +1,5 @@
 package com.mixedmug.finley.controller;
 
-import com.mixedmug.finley.model.Conversation;
 import com.mixedmug.finley.model.ConversationResponse;
 import com.mixedmug.finley.model.UserQuery;
 import com.mixedmug.finley.service.ConversationService;
@@ -21,23 +20,10 @@ public class FinleyController {
     }
 
     @PostMapping("/chat")
-    public Mono<ConversationResponse> chat(@RequestBody UserQuery userQuery) {
-        return conversationService.handleUserQuery(userQuery)
-                .flatMap(Mono::just)
-                .onErrorResume(Mono::error);
-    }
-
-    @GetMapping("/conversation")
-    public Mono<Conversation> conversation(@RequestParam String email) {
-        return conversationService.getConversation(email)
-                .flatMap(Mono::just)
-                .onErrorResume(Mono::error);
-    }
-
-    @PostMapping("/chat/reset")
-    public Mono<Void> resetConversation(@RequestParam String email) {
-        return conversationService.resetConversation(email)
-                .flatMap(Mono::just)
-                .onErrorResume(Mono::error);
+    public Mono<ConversationResponse> processChatRequest(@RequestBody UserQuery userQuery) {
+        if (userQuery.isValid()) {
+            return Mono.error(new IllegalArgumentException("Invalid UserQuery: email and message fields must not be blank or null."));
+        }
+        return conversationService.handleUserQuery(userQuery);
     }
 }
